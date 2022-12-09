@@ -74,8 +74,23 @@ your-profile:
       schema: your-default-schema
   target: dev
 ```
+  
+  <File name='my_model.sql'>
 
-</File>
+  ```sql 
+  {{ config(  materialized='incremental',     incremental_strategy='append'  ) }} 
+select * from {{ ref('seed_added') }} 
+{% if is_incremental() %} 
+where id > (select max(id) from {{this }}) 
+{% endif %} 
+  ```
+    </File>
+  
+  
+  
+  
+
+
 
 By default, `dbt-vertica` will request `ConnectionLoadBalance=true` (which is generally a good thing), and set a session label of `dbt_your-username`.
 
