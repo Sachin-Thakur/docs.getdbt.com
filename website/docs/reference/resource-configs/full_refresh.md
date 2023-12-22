@@ -1,5 +1,6 @@
 ---
 resource_types: [models, seeds]
+description: "Full_Refresh - Read this in-depth guide to learn about configurations in dbt."
 datatype: boolean
 ---
 
@@ -17,7 +18,7 @@ datatype: boolean
 
 ```yml
 models:
-  [<resource-path>](resource-path):
+  [<resource-path>](/reference/resource-configs/resource-path):
     +full_refresh: false
 
 ```
@@ -48,7 +49,7 @@ The configured model(s) will not full-refresh when `dbt run --full-refresh` is i
 
 ```yml
 seeds:
-  [<resource-path>](resource-path):
+  [<resource-path>](/reference/resource-configs/resource-path):
     +full_refresh: false
 
 ```
@@ -79,12 +80,12 @@ This logic is encoded in the [`should_full_refresh()`](https://github.com/dbt-la
 
 ### Incremental models
 
-* [How do I rebuild an incremental model?](configuring-incremental-models#how-do-i-rebuild-an-incremental-model)
-* [What if the columns of my incremental model change?](configuring-incremental-models#what-if-the-columns-of-my-incremental-model-change)
+* [How do I rebuild an incremental model?](/docs/build/incremental-models#how-do-i-rebuild-an-incremental-model)
+* [What if the columns of my incremental model change?](/docs/build/incremental-models#what-if-the-columns-of-my-incremental-model-change)
 
 ### Seeds
 
-<FAQ src="Seeds/full-refresh-seed" />
+<FAQ path="Seeds/full-refresh-seed" />
 
 ## Recommendation
 Set `full_refresh: false` for models of especially large datasets, which you would _never_ want dbt to fully drop and recreate.

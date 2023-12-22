@@ -3,12 +3,6 @@ datatype: [directorypath]
 default_value: [data]
 ---
 
-<Changelog>
-
-- **v1.0.0:** The config `data-paths` has been deprecated in favor of `seed-paths`.
-
-</Changelog>
-
 <File name='dbt_project.yml'>
 
 ```yml
@@ -18,11 +12,11 @@ seed-paths: [directorypath]
 </File>
 
 ## Definition
-Optionally specify a custom list of directories where [seed](docs/building-a-dbt-project/seeds.md) files are located.
+Optionally specify a custom list of directories where [seed](/docs/build/seeds) files are located.
 
 ## Default
 
-By default, dbt expects analyses to be located in the `seeds` directory, i.e. `seed-paths: ["seeds"]`
+By default, dbt expects seeds to be located in the `seeds` directory, i.e. `seed-paths: ["seeds"]`
 
 ## Examples
 ### Use a subdirectory named `custom_seeds` instead of `seeds`

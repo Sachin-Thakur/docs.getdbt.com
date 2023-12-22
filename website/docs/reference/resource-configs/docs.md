@@ -1,5 +1,7 @@
 ---
+sidebar_label: "docs"
 resource_types: models
+description: "Docs - Read this in-depth guide to learn about configurations in dbt."
 datatype: "{dictionary}"
 default_value: {show: true}
 ---
@@ -15,20 +17,35 @@ default_value: {show: true}
     { label: 'Macros', value: 'macros', },
   ]
 }>
+
 <TabItem value="models">
+
+You can configure `docs` behavior for many resources at once by setting in `dbt_project.yml`. You can also use the `docs` config in `properties.yaml` files, to set or override documentation behaviors for specific resources:
+
+
+<File name='dbt_project.yml'>
+
+```yml
+models:
+  [<resource-path>](/reference/resource-configs/resource-path):
+    +docs:
+      show: true | false
+
+```
+
+</File>
 
 <File name='models/schema.yml'>
 
-```yml
+  ```yml
 version: 2
 
 models:
   - name: model_name
     docs:
       show: true | false
-
+      node_color: "black"
 ```
-
 </File>
 
 </TabItem>
@@ -41,6 +58,20 @@ This property is not implemented for sources.
 
 <TabItem value="seeds">
 
+You can use the docs property in YAML files, including the `dbt_project.yml`:
+
+<File name='dbt_project.yml'>
+
+```yml
+seeds:
+  [<resource-path>](/reference/resource-configs/resource-path):
+    +docs:
+      show: true | false
+
+```
+
+</File>
+
 <File name='seeds/schema.yml'>
 
 ```yml
@@ -50,14 +81,26 @@ seeds:
   - name: seed_name
     docs:
       show: true | false
-
 ```
-
 </File>
 
 </TabItem>
 
 <TabItem value="snapshots">
+
+You can use the docs property in YAML files, including the `dbt_project.yml`:
+
+<File name='dbt_project.yml'>
+
+```yml
+snapshots:
+  [<resource-path>](/reference/resource-configs/resource-path):
+    +docs:
+      show: true | false
+
+```
+
+</File>
 
 <File name='snapshots/schema.yml'>
 
@@ -68,14 +111,15 @@ snapshots:
   - name: snapshot_name
     docs:
       show: true | false
-
 ```
-
 </File>
 
 </TabItem>
 
 <TabItem value="analyses">
+
+You can use the docs property in YAML files, _except_ in `dbt_project.yml`. Refer to [Analysis properties](/reference/analysis-properties) for more info.
+
 
 <File name='analysis/schema.yml'>
 
@@ -87,16 +131,13 @@ analyses:
     docs:
       show: true | false
 ```
-
 </File>
 
 </TabItem>
 
 <TabItem value="macros">
 
-<!----
-To-do: check this
---->
+You can use the docs property in YAML files, _except_ in `dbt_project.yml`. Refer to [Macro properties](/reference/macro-properties) for more info.
 
 <File name='macros/schema.yml'>
 
@@ -107,9 +148,7 @@ macros:
   - name: macro_name
     docs:
       show: true | false
-
 ```
-
 </File>
 
 </TabItem>
@@ -117,15 +156,9 @@ macros:
 </Tabs>
 
 ## Definition
-The docs field can be used to provide documentation-specific configuration to models. The only currently supported docs attribute is shown, which controls whether or not models are shown in the auto-generated documentation website.
+The docs field can be used to provide documentation-specific configuration to models. It supports the doc attribute `show`, which controls whether or not models are shown in the auto-generated documentation website. It also supports `node_color` for some node types.
 
-**Note:** hidden models will still appear in the dbt DAG visualization but will be identified as "hidden.”
-
-<Changelog>
-
-* `v0.16.0`: This property was added
-
-</Changelog>
+**Note:** Hidden models will still appear in the dbt DAG visualization but will be identified as "hidden.”
 
 ## Default
 The default value for `show` is `true`.
@@ -171,7 +204,7 @@ models:
 
 ## Custom node colors
 
-The `docs` attribute now supports `node_color` to customize the node color in the DAG within dbt docs. You can define node colors in the files below and apply overrides where needed.
+The `docs` attribute now supports `node_color` to customize the display color of some node types in the DAG within dbt docs. You can define node colors in the files below and apply overrides where needed.
 
 `node_color` hiearchy:
 
@@ -180,7 +213,7 @@ The `docs` attribute now supports `node_color` to customize the node color in th
 
 ## Examples
 
-Add custom node colors to models within subdirectories based on hex codes or a plain color name.
+Add custom `node_colors` to models that support it within subdirectories based on hex codes or a plain color name.
 
 ![Example](../../../../website/static/img/node_color_example.png)
 

@@ -1,5 +1,6 @@
 ---
 title: "Custom aliases"
+description: "Read this tutorial to learn how to use custom aliases when building in dbt."
 id: "custom-aliases"
 ---
 
@@ -33,6 +34,19 @@ select * from ...
 
 </File>
 
+Or in a `schema.yml` file.
+
+<File name='models/google_analytics/schema.yml'>
+
+```yaml
+- models:
+    - name: ga_sessions
+      config:
+        alias: sessions
+```
+
+</File>
+
 When referencing the `ga_sessions` model above from a different model, use the `ref()` function with the model's _filename_ as usual. For example:
 
 <File name='models/combined_sessions.sql'>
@@ -59,6 +73,8 @@ To override dbt's alias name generation, create a macro named `generate_alias_na
 
 The default implementation of `generate_alias_name` simply uses the supplied `alias` config (if present) as the model alias, otherwise falling back to the model name. This implementation looks like this:
 
+<VersionBlock lastVersion="1.4">
+
 <File name='get_custom_alias.sql'>
 
 ```jinja2
@@ -80,25 +96,65 @@ The default implementation of `generate_alias_name` simply uses the supplied `al
 
 </File>
 
+</VersionBlock>
+
+<VersionBlock firstVersion="1.5">
+
+<File name='get_custom_alias.sql'>
+
+```jinja2
+{% macro generate_alias_name(custom_alias_name=none, node=none) -%}
+
+    {%- if custom_alias_name -%}
+
+        {{ custom_alias_name | trim }}
+
+    {%- elif node.version -%}
+
+        {{ return(node.name ~ "_v" ~ (node.version | replace(".", "_"))) }}
+
+    {%- else -%}
+
+        {{ node.name }}
+
+    {%- endif -%}
+
+{%- endmacro %}
+
+```
+
+</File>
+
+</VersionBlock>
+
+
+### Dispatch macro - SQL alias management for databases and dbt packages
+
+See docs on macro `dispatch`: ["Managing different global overrides across packages"](/reference/dbt-jinja-functions/dispatch#managing-different-global-overrides-across-packages)
+
+
 ### Caveats
 
 #### Ambiguous database identifiers
 
 Using aliases, it's possible to accidentally create models with ambiguous identifiers. Given the following two models, dbt would attempt to create two <Term id="view">views</Term> with _exactly_ the same names in the database (ie. `sessions`):
 
-```sql
--- models/snowplow_sessions.sql
+<File name='models/snowplow_sessions.sql'>
 
+```sql
 {{ config(alias='sessions') }}
 
 select * from ...
 ```
+</File>
+
+<File name='models/sessions.sql'>
 
 ```sql
--- models/sessions.sql
-
 select * from ...
 ```
+
+</File>
 
 Whichever one of these models runs second would "win", and generally, the output of dbt would not be what you would expect. To avoid this failure mode, dbt will check if your model names and aliases are ambiguous in nature. If they are, you will be presented with an error message like this:
 
@@ -114,3 +170,21 @@ Compilation Error
 ```
 
 If these models should indeed have the same database identifier, you can work around this error by configuring a [custom schema](/docs/build/custom-schemas) for one of the models.
+
+#### Model versions
+
+<VersionBlock lastVersion="1.4">
+
+New in v1.5
+
+</VersionBlock>
+
+<VersionBlock firstVersion="1.5">
+
+**Related documentation:**
+- [Model versions](/docs/collaborate/govern/model-versions)
+- [`versions`](/reference/resource-properties/versions#alias)
+
+By default, dbt will create versioned models with the alias `<model_name>_v<v>`, where `<v>` is that version's unique identifier. You can customize this behavior just like for non-versioned models by configuring a custom `alias` or re-implementing the `generate_alias_name` macro.
+
+</VersionBlock>
